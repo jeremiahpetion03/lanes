@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Type check
+        run: npm run typecheck
+      - name: API and unit tests
+        run: npm test
+      - name: Build the front-end
+        run: npm run build
+      - name: Install Chromium for browser tests
+        run: npx playwright install --with-deps chromium
+      - name: End-to-end tests (two real browser users)
+        run: npm run test:e2e
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the Docker image
+        run: docker build -t lanes .
+      - name: Run the container and check it responds
+        run: |
+          docker run -d --name lanes -p 3000:3000 lanes
+          for i in $(seq 1 30); do curl -sf -o /dev/null http://localhost:3000/ && break; sleep 1; done
+          curl -sf http://localhost:3000/ | grep -q '<div id="root">'
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/api/auth/me)" = "401"
+          echo "Container is serving the app and the API."
+      - name: Show container logs
+        if: always()
+        run: docker logs lanes || true
