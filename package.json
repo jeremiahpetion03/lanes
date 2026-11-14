@@ -1,0 +1,32 @@
+{
+  "name": "lanes",
+  "version": "1.0.0",
+  "description": "A real-time collaborative Kanban board: React + TypeScript front-end, Node.js API, SQLite.",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "start": "node --disable-warning=ExperimentalWarning --import tsx server/index.ts",
+    "dev": "node scripts/dev.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "node --disable-warning=ExperimentalWarning --import tsx --test tests/*.test.ts",
+    "test:e2e": "node --disable-warning=ExperimentalWarning --import tsx --test e2e/*.test.ts"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tsx": "^4.20.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "esbuild": "^0.28.0",
+    "playwright": "^1.60.0",
+    "typescript": "^6.0.0"
+  }
+}
