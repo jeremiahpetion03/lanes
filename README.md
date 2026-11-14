@@ -1,5 +1,7 @@
 # Lanes
 
+[![CI](https://github.com/jeremiahpetion03/lanes/actions/workflows/ci.yml/badge.svg)](https://github.com/jeremiahpetion03/lanes/actions/workflows/ci.yml)
+
 A real-time collaborative Kanban board. Create a board, invite teammates, and drag cards between columns. Everyone watching the board sees each change instantly.
 
 **Stack:** React 19 + TypeScript front-end · Node.js API · SQLite database · Server-Sent Events for live updates
@@ -38,6 +40,17 @@ Open two different browsers, or one normal window and one private window, sign u
 | `npm test` | 21 API and unit tests |
 | `npm run test:e2e` | Browser tests with two real Chromium users (run `npx playwright install chromium` once first) |
 | `npm run typecheck` | TypeScript check of the whole project |
+
+Every push runs all of these on GitHub Actions (see the badge above), plus a Docker build and container check.
+
+### With Docker
+
+```bash
+docker build -t lanes .
+docker run -p 3000:3000 -v lanes-data:/data lanes    # http://localhost:3000
+```
+
+The image is built in two stages, so the final image contains only the server, the built front-end, and production dependencies. It runs as a non-root user and keeps the SQLite database on a volume (`/data`), so your data survives container restarts. CI builds the image and checks that the running container serves both the app and the API.
 
 Settings come from environment variables: `PORT` (default 3000), `DATABASE_PATH` (default `lanes.db`), and `COOKIE_SECURE=1` when serving over HTTPS.
 
